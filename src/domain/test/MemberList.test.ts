@@ -34,4 +34,39 @@ describe("MemberList", () => {
     list.add(member);
     expect(list.totalFees()).toBe(1500);
   });
+
+  test("Suma correcta", () => {
+    let member2 = new Member({
+      name: "Ana Pérez",
+      documentId: "12345670",
+      plan: "full",
+      monthlyFee: 1000,
+    });
+    list.add(member);
+    list.add(member2);
+    member.discount = 0;
+    member2.discount = 10;
+    expect(list.totalDiscounted()).toEqual(2400);
+  });
+
+  test("Actualizacion correcta", () => {
+    let member2 = new Member({
+      name: "Ana Pérez",
+      documentId: "12345670",
+      plan: "full",
+      monthlyFee: 1000,
+    });
+    list.add(member);
+    list.add(member2);
+    member.discount = 0;
+    member2.discount = 10;
+    list.updateFee("12345670",800);
+    expect(member2.monthlyFee).toEqual(800);
+  });
+
+  test("No existe miembro con ese documento", () => {
+    list.add(member);
+    expect(() => list.updateFee("2442242",444)).toThrow();
+  });
+
 });

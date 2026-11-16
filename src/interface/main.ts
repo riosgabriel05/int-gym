@@ -11,6 +11,7 @@ const inpDocument = document.getElementById(
 ) as HTMLInputElement | null;
 const selPlan = document.getElementById("sel-plan") as HTMLSelectElement | null;
 const inpFee = document.getElementById("inp-fee") as HTMLInputElement | null;
+const inpDesc = document.getElementById("inp-desc") as HTMLInputElement | null;
 const btnAdd = document.getElementById("btn-add") as HTMLButtonElement | null;
 const errorContainer = document.getElementById(
   "error-container",
@@ -35,10 +36,11 @@ const inpTotalFees = document.getElementById(
 ) as HTMLInputElement | null;
 
 function clearInputs(): void {
-  if (inpName && inpDocument && inpFee) {
+  if (inpName && inpDocument && inpFee && inpDesc) {
     inpName.value = "";
     inpDocument.value = "";
     inpFee.value = "";
+    inpDesc.value = "";
   }
 }
 
@@ -74,6 +76,13 @@ function createFeeEditor(member: Member): HTMLDivElement {
   button.textContent = "Guardar cuota";
   button.addEventListener("click", () => {
     // TODO: editar la cuota del socio con el valor de input
+    try {
+      member.monthlyFee = Number(input.value);
+      updateList();
+      updateTotals();
+    } catch (error) {
+      showError(error instanceof Error ? error.message : String(error));
+    }
   });
   group.append(input, button);
   return group;
@@ -89,15 +98,17 @@ function createCard(member: Member): HTMLDivElement {
   const title = document.createElement("h5");
   title.className = "card-title";
   title.textContent = member.name;
+  const plan = document.createElement("h5");
+  plan.className = "badge text-bg-secondary";
+  plan.textContent = PLAN_LABELS[member.plan];
   const lines = [
     `Documento: ${member.documentId}`,
-    `Plan: ${PLAN_LABELS[member.plan]}`,
     `Cuota mensual: $${member.monthlyFee}`,
   ];
   if (member.discount > 0) {
     lines.push(`Descuento: ${member.discount}%`);
   }
-  body.append(title, ...lines.map(createText));
+  body.append(title, plan, ...lines.map(createText));
   const footer = document.createElement("div");
   footer.className = "card-footer bg-transparent";
   footer.append(createFeeEditor(member));

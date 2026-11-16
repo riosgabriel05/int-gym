@@ -49,10 +49,30 @@ describe("Member", () => {
   test("reject a monthly fee that is not a number", () => {
     expect(() => (member.monthlyFee = Number.NaN)).toThrow();
   });
+  
+  test("Descuento que es menor a 0", () => {
+    expect(() => (member.discount = -1)).toThrow();
+  });
+
+  test("Descuento que es mayor a 100", () => {
+    expect(() => (member.discount = 101)).toThrow();
+  });
+
+  test("Guardar descuento", () => {
+    member.discount=10;
+    expect(member.discount).toBe(10);
+  });
 
   test("show the member as text", () => {
     expect(member.toString()).toBe(
       "Ana Pérez (doc. 12345678) - Plan Completo - $1500",
+    );
+  });
+
+  test("show the member as text v2", () => {
+    member.discount=10
+    expect(member.toString()).toBe(
+      "Ana Pérez (doc. 12345678) - Plan Completo - $1500 - Descuento: 10%", 
     );
   });
 });
